@@ -9,7 +9,7 @@ const NavigationButtons = ({
     isSubmitting,
 }) => {
     return (
-        <div className="flex justify-between mt-8">
+        <div className={`flex ${currentStep === 0 ? 'justify-end' : 'justify-between'}`}>
             {currentStep > 0 && (
                 <button
                     type="button"
