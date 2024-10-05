@@ -8,6 +8,7 @@ const Sidebar = ({ isOpen }) => {
     const sidebarItems = [
         { name: 'dashboard', label: 'لوحة التحكم', icon: 'https://img.icons8.com/material-outlined/24/null/dashboard--v1.png' },
         { name: 'orphans', label: 'كفالة اليتيم', icon: 'https://img.icons8.com/material-outlined/24/null/user.png' },
+        { name: 'aids', label: 'المساعدات', icon: 'https://img.icons8.com/material-outlined/24/null/box.png' },
     ];
 
     useEffect(() => {

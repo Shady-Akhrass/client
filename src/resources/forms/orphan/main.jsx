@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import _ from 'lodash';
 import imageCompression from 'browser-image-compression';
@@ -7,15 +7,16 @@ import FatherForm from './fatherForm';
 import MotherForm from './motherForm';
 import GuardianForm from './guardianForm';
 import ApprovalForm from './approvalForm';
-import ProgressBar from '../base/ProgressBar';
-import NavigationButtons from '../base/NavigationButtons';
-import SuccessMessage from '../base/SuccessMessage';
-import ErrorMessage from '../base/ErrorMessage';
-import Alert from '../base/Alert';
-import Logo from '../base/Logo';
+import ProgressBar from '../base/progressBar';
+import NavigationButtons from '../base/navigationButtons';
+import SuccessMessage from '../base/successMessage';
+import ErrorMessage from '../base/errorMessage';
+import Alert from '../base/alert';
+import Logo from '../base/logo';
 
 function Main() {
     const sections = ['بيانات اليتيم', 'بيانات الأب', 'بيانات الأم', 'بيانات الوصي', 'التعهد'];
+    const hasIncrementedRef = useRef(false);
     const totalSteps = sections.length;
     const [currentStep, setCurrentStep] = useState(0);
     const [formData, setFormData] = useState({
@@ -349,13 +350,15 @@ function Main() {
     useEffect(() => {
         document.title = "استبانة كفالة اليتيم";
         const incrementVisitorCount = async () => {
+            if (hasIncrementedRef.current) return;
+            hasIncrementedRef.current = true;
             try {
-                const response = await axios.post('https://forms-api.saiid.org/api/increment-visitor-count');
+                const response = await axios.post('https://forms-api.saiid.org/api/increment-visitor-orphans-count');
+                console.log(response.data);
             } catch (error) {
                 console.error('Error incrementing visitor count:', error);
             }
         };
-
         incrementVisitorCount();
     }, []);
 
