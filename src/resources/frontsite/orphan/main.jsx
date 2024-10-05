@@ -365,7 +365,7 @@ function Main() {
             style={{ direction: 'rtl' }}
         >
 
-            <div className="bg-white shadow-md rounded-xl max-w-2xl mx-auto p-4 px-4 sm:px-6 lg:px-8 py-16 mt-10 mb-10" style={{ direction: 'rtl' }}>
+            <div className="bg-white shadow-md rounded-xl max-w-2xl mx-auto p-4 px-4 sm:px-6 lg:px-8 py-8 mt-16 mb-10" style={{ direction: 'rtl' }}>
                 <Logo />
 
                 <ProgressBar currentStep={currentStep} totalSteps={totalSteps} />
