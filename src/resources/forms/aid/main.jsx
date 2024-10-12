@@ -7,8 +7,7 @@ import ProgressBar from "../base/progressBar";
 import NavigationButtons from "../base/navigationButtons";
 import SuccessMessage from "../base/successMessage";
 import ErrorMessage from "../base/errorMessage";
-import Alert from "../base/alert";
-import Logo from "../base/logo";
+import Alert from "../base/alert";import Logo from "../base/logo";
 
 function Main() {
     const hasIncrementedRef = useRef(false);

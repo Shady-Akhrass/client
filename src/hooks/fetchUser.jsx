@@ -11,7 +11,7 @@ const useFetchUserData = (showToast) => {
             // Retrieve the token from localStorage or sessionStorage
             const token = localStorage.getItem('token') || sessionStorage.getItem('token');
 
-            const response = await fetch(`https://forms-api.saiid.org/api/user/${userId}`, {
+            const response = await fetch(`http://127.0.0.1:8000/api/user/${userId}`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`, 

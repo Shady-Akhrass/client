@@ -9,6 +9,9 @@ const Sidebar = ({ isOpen }) => {
         { name: 'dashboard', label: 'لوحة التحكم', icon: 'https://img.icons8.com/material-outlined/24/null/dashboard--v1.png' },
         { name: 'orphans', label: 'كفالة اليتيم', icon: 'https://img.icons8.com/material-outlined/24/null/user.png' },
         { name: 'aids', label: 'المساعدات', icon: 'https://img.icons8.com/material-outlined/24/null/box.png' },
+        { name: 'teachers', label: 'المعلمين', icon: 'https://img.icons8.com/material-outlined/24/null/teacher.png' },
+        { name: 'students', label: 'الطلاب', icon: 'https://img.icons8.com/material-outlined/24/null/students.png' },
+
     ];
 
     useEffect(() => {

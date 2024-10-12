@@ -224,7 +224,7 @@ const AidForm = ({ formData, handleChange }) => {
                         } rounded-lg w-full`}
                     required
                 >
-                    <option value=""> هل رب الأسرة يعاني من الإعاقة </option>
+                    <option value=""> هل رب الأسرة يعاني من مرض </option>
                     <option value="مريض">نعم</option>
                     <option value="جيدة">لا</option>
                 </select>
