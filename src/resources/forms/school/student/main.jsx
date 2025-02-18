@@ -132,7 +132,7 @@ function Main() {
 
       try {
         const response = await axios.post(
-          "https://forms-api.saiid.org/api/increment-visitor-aids-count"
+          "https://forms-api.saiid.org/api/increment-visitor-students-count"
         );
         console.log(response.data);
       } catch (error) {

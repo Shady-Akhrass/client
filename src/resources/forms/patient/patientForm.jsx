@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 
-const AidForm = ({ formData, handleChange }) => {
+const PatientForm = ({ formData, handleChange }) => {
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
@@ -15,8 +15,10 @@ const AidForm = ({ formData, handleChange }) => {
             case "name":
                 if (!value) {
                     error = "يرجى إدخال الاسم رباعي";
-                } else if (value.length < 4) {
-                    error = "الاسم يجب أن يكون رباعي";
+                } else if (value.split(" ").length < 4) {
+                    error = "يرجى إدخال الاسم رباعي كامل";
+                } else if (/\d/.test(value)) {
+                    error = "الاسم لا يجب أن يحتوي على أرقام";
                 }
                 break;
 
@@ -31,6 +33,12 @@ const AidForm = ({ formData, handleChange }) => {
             case "birth_date":
                 if (!value) {
                     error = "يرجى إدخال تاريخ الميلاد";
+                } else {
+                    const date = new Date(value);
+                    const today = new Date();
+                    if (date > today) {
+                        error = "تاريخ الميلاد لا يمكن أن يكون في المستقبل";
+                    }
                 }
                 break;
 
@@ -55,82 +63,48 @@ const AidForm = ({ formData, handleChange }) => {
             case "number_of_brothers":
                 if (
                     formData.marital_status &&
-                    ["متزوج", "أرمل", "مطلق"].includes(formData.marital_status) &&
-                    !value
+                    ["متزوج", "أرمل", "مطلق"].includes(formData.marital_status)
                 ) {
-                    error = "يرجى إدخال عدد الأبناء الذكور";
+                    if (!value && value !== 0) {
+                        error = "يرجى إدخال عدد الأبناء الذكور";
+                    } else if (value < 0) {
+                        error = "عدد الأبناء لا يمكن أن يكون سالباً";
+                    }
                 }
                 break;
 
             case "number_of_sisters":
                 if (
                     formData.marital_status &&
-                    ["متزوج", "أرمل", "مطلق"].includes(formData.marital_status) &&
-                    !value
+                    ["متزوج", "أرمل", "مطلق"].includes(formData.marital_status)
                 ) {
-                    error = "يرجى إدخال عدد البنات الإناث";
+                    if (!value && value !== 0) {
+                        error = "يرجى إدخال عدد البنات الإناث";
+                    } else if (value < 0) {
+                        error = "عدد البنات لا يمكن أن يكون سالباً";
+                    }
                 }
                 break;
-
-            case "job":
-                if (!value) {
-                    error = "يرجى اختيار نوع العمل";
-                }
-                break;
-
-            case "salary":
-                if (!value) {
-                    error = "يرجى اختيار مستوى الدخل";
-                }
-                break;
-
-            case "original_address":
-                if (!value) {
-                    error = "يرجى اختيار عنوان السكن الأساسي";
-                }
-                break;
-
             case "current_address":
                 if (!value) {
                     error = "يرجى اختيار عنوان السكن الحالي";
                 }
                 break;
-
-            case "address_details":
-                if (!value) {
-                    error = "يرجى إدخال عنوان السكن بالتفصيل";
-                }
-                break;
-
             case "guardian_phone_number":
                 if (!value) {
                     error = "يرجى إدخال رقم الجوال";
-                } else if (!/^\d{10}$/.test(value)) {
-                    error = "رقم الجوال يجب أن يتكون من 10 أرقام";
+                } else if (!/^05\d{8}$/.test(value)) {
+                    error = "رقم الجوال يجب أن يبدأ ب 05 ويتكون من 10 أرقام";
                 }
                 break;
 
             case "alternative_phone_number":
                 if (!value) {
                     error = "يرجى إدخال رقم الجوال البديل";
-                } else if (!/^\d{10}$/.test(value)) {
-                    error = "رقم الجوال البديل يجب أن يتكون من 10 أرقام";
-                }
-                break;
-
-            case "aid":
-                if (!value) {
-                    error = "يرجى اختيار نوع المساعدة";
-                }
-                break;
-
-            case "nature_of_aid":
-                if (
-                    formData.aid &&
-                    ["وزارة_التنمية", "وكالة_الغوث"].includes(formData.aid) &&
-                    !value
-                ) {
-                    error = "يرجى إدخال طبيعة المساعدة";
+                } else if (!/^05\d{8}$/.test(value)) {
+                    error = "رقم الجوال يجب أن يبدأ ب 05 ويتكون من 10 أرقام";
+                } else if (value === formData.guardian_phone_number) {
+                    error = "رقم الجوال البديل يجب أن يكون مختلفاً عن الرقم الأساسي";
                 }
                 break;
 
@@ -147,11 +121,12 @@ const AidForm = ({ formData, handleChange }) => {
         setErrors((prevErrors) => ({ ...prevErrors, [name]: error }));
         handleChange(e);
     };
+
     return (
-        <div className="aids-form">
-            <h2 className="text-2xl font-semibold mb-4">بيانات رب الأسرة</h2>
-            <div className="mb-4 ">
-                <label className="block text-gray-700">الاسم رباعي </label>
+        <div className="patient-form">
+            <h2 className="text-2xl font-semibold mb-4">بيانات المريض</h2>
+            <div className="mb-4">
+                <label className="block text-gray-700">الاسم رباعي</label>
                 <input
                     type="text"
                     name="name"
@@ -165,7 +140,7 @@ const AidForm = ({ formData, handleChange }) => {
             </div>
 
             <div className="mb-4">
-                <label className="block text-gray-700">رقم الهوية </label>
+                <label className="block text-gray-700">رقم الهوية</label>
                 <input
                     type="number"
                     name="id_number"
@@ -195,6 +170,7 @@ const AidForm = ({ formData, handleChange }) => {
                     <span className="text-red-500">{errors.birth_date}</span>
                 )}
             </div>
+
             <div className="mb-4">
                 <label className="block text-gray-700">الجنس</label>
                 <select
@@ -206,15 +182,15 @@ const AidForm = ({ formData, handleChange }) => {
                     required
                 >
                     <option value="">اختار الجنس</option>
-                    <option value="ذكر"> ذكر</option>
-                    <option value="أنثى"> انثى</option>
+                    <option value="ذكر">ذكر</option>
+                    <option value="أنثى">انثى</option>
                 </select>
                 {errors.gender && <span className="text-red-500">{errors.gender}</span>}
             </div>
+
             <div className="mb-4">
                 <label className="block text-gray-700">
-                    {" "}
-                    هل رب الأسرة يعاني من الإعاقة؟
+                    هل المريض يعاني من الإعاقة؟
                 </label>
                 <select
                     name="health_status"
@@ -224,7 +200,7 @@ const AidForm = ({ formData, handleChange }) => {
                         } rounded-lg w-full`}
                     required
                 >
-                    <option value=""> هل رب الأسرة يعاني من مرض </option>
+                    <option value="">هل المريض يعاني من إعاقة</option>
                     <option value="مريض">نعم</option>
                     <option value="جيدة">لا</option>
                 </select>
@@ -282,6 +258,7 @@ const AidForm = ({ formData, handleChange }) => {
                                 name="number_of_brothers"
                                 value={formData.number_of_brothers}
                                 onChange={handleFieldChange}
+                                min="0"
                                 className={`mt-1 p-2 border ${errors.number_of_brothers
                                     ? "border-red-500"
                                     : "border-gray-300"
@@ -302,6 +279,7 @@ const AidForm = ({ formData, handleChange }) => {
                                 name="number_of_sisters"
                                 value={formData.number_of_sisters}
                                 onChange={handleFieldChange}
+                                min="0"
                                 className={`mt-1 p-2 border ${errors.number_of_sisters
                                     ? "border-red-500"
                                     : "border-gray-300"
@@ -313,70 +291,8 @@ const AidForm = ({ formData, handleChange }) => {
                             )}
                         </div>
                     </div>
-                    {errors.disease_description && (
-                        <span className="text-red-500">{errors.disease_description}</span>
-                    )}
                 </div>
             )}
-            <div className="mb-4">
-                <label className="block text-gray-700">العمل</label>
-                <select
-                    name="job"
-                    value={formData.job}
-                    onChange={handleFieldChange}
-                    className={`mt-1 p-2 border ${errors.job ? "border-red-500" : "border-gray-300"
-                        } rounded-lg w-full`}
-                    required
-                >
-                    <option value="">اختر نوع العمل</option>
-                    <option value="حكومي عسركي">حكومي عسكري</option>
-                    <option value="حكومي مدني">حكومي مدني</option>
-                    <option value="وكالة الغوث">وكالة الغوث</option>
-                    <option value="قطاع خاص">قطاع خاص </option>
-                    <option value="عاطل">عاطل عن العمل </option>
-                </select>
-                {errors.job && <span className="text-red-500">{errors.job}</span>}
-            </div>
-            <div className="mb-4">
-                <label className="block text-gray-700">الدخل الشهري</label>
-                <select
-                    name="salary"
-                    value={formData.salary}
-                    onChange={handleFieldChange}
-                    className={`mt-1 p-2 border ${errors.salary ? "border-red-500" : "border-gray-300"
-                        } rounded-lg w-full`}
-                    required
-                >
-                    <option value="">اختر مستوى الدخل</option>
-                    <option value="1000">أقل من 1000 شيكل</option>
-                    <option value="2000">أقل من 2000 شيكل</option>
-                    <option value="3000">أقل من 3000 شيكل</option>
-                    <option value="4000">أقل من 4000 شيكل</option>
-                    <option value="5000">أكثر من 5000 شيكل</option>
-                </select>
-                {errors.salary && <span className="text-red-500">{errors.salary}</span>}
-            </div>
-            <div className="mb-4">
-                <label className="block text-gray-700">عنوان السكن الاساسي</label>
-                <select
-                    name="original_address"
-                    value={formData.original_address}
-                    onChange={handleFieldChange}
-                    className={`mt-1 p-2 border ${errors.original_address ? "border-red-500" : "border-gray-300"
-                        } rounded-lg w-full`}
-                    required
-                >
-                    <option value="">اختار عنوان السكن الاساسي</option>
-                    <option value="محافظة رفح">محافظة رفح</option>
-                    <option value="محافظة خانيونس">محافظة خانيونس</option>
-                    <option value="محافظة الوسطى">محافظة الوسطى</option>
-                    <option value="محافظة غزة">محافظة غزة</option>
-                    <option value="محافظة الشمال">محافظة الشمال</option>
-                </select>
-                {errors.original_address && (
-                    <span className="text-red-500">{errors.original_address}</span>
-                )}
-            </div>
 
             <div className="mb-4">
                 <label className="block text-gray-700">عنوان السكن الحالي</label>
@@ -401,28 +317,13 @@ const AidForm = ({ formData, handleChange }) => {
             </div>
 
             <div className="mb-4">
-                <label className="block text-gray-700">عنوان السكن بالتفصيل</label>
-
-                <textarea
-                    name="address_details"
-                    value={formData.address_details}
-                    required
-                    onChange={handleFieldChange}
-                    className={`mt-1 p-2 border ${errors.address_details ? "border-red-500" : "border-gray-300"
-                        } rounded-lg w-full`}
-                />
-                {errors.address_details && (
-                    <span className="text-red-500">{errors.address_details}</span>
-                )}
-            </div>
-
-            <div className="mb-4">
                 <label className="block text-gray-700">رقم الجوال</label>
                 <input
                     type="text"
                     name="guardian_phone_number"
                     value={formData.guardian_phone_number}
                     onChange={handleFieldChange}
+                    placeholder="05xxxxxxxx"
                     className={`mt-1 p-2 border ${errors.guardian_phone_number ? "border-red-500" : "border-gray-300"
                         } rounded-lg w-full`}
                     required
@@ -439,6 +340,7 @@ const AidForm = ({ formData, handleChange }) => {
                     name="alternative_phone_number"
                     value={formData.alternative_phone_number}
                     onChange={handleFieldChange}
+                    placeholder="05xxxxxxxx"
                     className={`mt-1 p-2 border ${errors.alternative_phone_number
                         ? "border-red-500"
                         : "border-gray-300"
@@ -451,54 +353,8 @@ const AidForm = ({ formData, handleChange }) => {
                     </span>
                 )}
             </div>
-            <div className="mb-4">
-                <label className="block text-gray-700">
-                    هل تتلقى أي مساعدات من جهات أخرى؟
-                </label>
-                <select
-                    name="aid"
-                    value={formData.aid}
-                    onChange={handleFieldChange}
-                    className={`mt-1 p-2 border ${errors.aid ? "border-red-500" : "border-gray-300"
-                        } rounded-lg w-full`}
-                    required
-                >
-                    <option value=""> هل تتلقى أي مساعدات من جهات أخرى؟</option>
-                    <option value="وكالة الغوث">وكالة الغوث</option>
-                    <option value="وزارة التنمية">وزارة التنمية</option>
-                    <option value="لا">لا أتلقى مساعدة </option>
-                </select>
-                {errors.aid && <span className="text-red-500">{errors.aid}</span>}
-            </div>
-
-            {["وزارة التنمية", "وكالة الغوث"].includes(formData.aid) && (
-                <div className="mb-4">
-                    <div className="mb-4  ">
-                        <div className="mb-4">
-                            <label className="block text-gray-700">طبيعة المساعدات</label>
-                            <input
-                                type="text"
-                                name="nature_of_aid"
-                                value={formData.nature_of_aid}
-                                onChange={handleFieldChange}
-                                className={`mt-1 p-2 border ${errors.nature_of_aid ? "border-red-500" : "border-gray-300"
-                                    } rounded-lg w-full`}
-                                required
-                            />
-                            {errors.number_of_brothers && (
-                                <span className="text-red-500">
-                                    {errors.number_of_brothers}
-                                </span>
-                            )}
-                        </div>
-                    </div>
-                    {errors.disease_description && (
-                        <span className="text-red-500">{errors.disease_description}</span>
-                    )}
-                </div>
-            )}
         </div>
     );
 };
 
-export default AidForm;
+export default PatientForm;

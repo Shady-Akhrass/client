@@ -17,7 +17,7 @@ function Login() {
     }, []); // Empty dependency array means this effect runs once when the component mounts
 
     if (isAuthenticated) {
-        return <Navigate to="/dashboard" />;
+        return <Navigate to="/statistics/orphans-statistics" />;
     }
 
     const handleSubmit = async (e) => {
@@ -25,7 +25,7 @@ function Login() {
         setIsLoading(true);  // Show the loader when fetching starts
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/login', {
+            const response = await fetch('https://forms-api.saiid.org/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ function Login() {
             if (response.ok) {
                 const data = await response.json();
                 login(data, remember);
-                navigate('/dashboard');
+                navigate('/statistics/orphans-statistics');
             } else {
                 const errorText = await response.text();
                 console.error('Login failed', response.status, errorText);

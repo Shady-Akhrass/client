@@ -9,7 +9,7 @@ export default defineConfig({
     host: true,
     proxy: {
       '/api': 'https://saiid-api.vercel.app',
-  },
+    },
     // proxy: {
     //   '/api': {
     //     target: 'http://localhost:5000',

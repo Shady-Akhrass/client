@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Toast from '../../../../components/toast';
+import Toast from '../../../components/toast';
 import { Search, Download, ChevronLeft, ChevronRight } from 'lucide-react';
 
-const Students = () => {
-    const [students, setStudents] = useState([]);
+const Employments = () => {
+    const [employments, setEmployments] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
-    const [totalStudents, setTotalStudents] = useState(0);
+    const [totalEmployments, setTotalEmployments] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const [sortConfig, setSortConfig] = useState({ key: '', direction: '' });
     const [toast, setToast] = useState({ message: '', type: '', isVisible: false });
@@ -20,44 +20,43 @@ const Students = () => {
         return date.toISOString().split('T')[0];
     };
 
-    const fetchStudents = async () => {
+    const fetchEmployments = async () => {
         setIsLoading(true);
         try {
             const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-            const response = await axios.get('https://forms-api.saiid.org/api/students', {
+            const response = await axios.get('https://forms-api.saiid.org/api/employments', {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
                 params: { searchQuery, perPage, page: currentPage }
             });
 
-            console.error(response);
-            if (Array.isArray(response.data.students)) {
-                setStudents(response.data.students);
-                setTotalStudents(response.data.totalStudents);
+            if (Array.isArray(response.data.employments)) {
+                setEmployments(response.data.employments);
+                setTotalEmployments(response.data.totalEmployments);
                 setTotalPages(response.data.totalPages);
             } else {
-                setStudents([]);
-                setTotalStudents(0);
+                setEmployments([]);
+                setTotalEmployments(0);
                 setTotalPages(0);
             }
         } catch (error) {
-            console.error('Error fetching students:', error);
-            setToast({ message: 'خطأ في جلب بيانات الطلاب، يرجى المحاولة مرة أخرى.', type: 'error', isVisible: true });
-            setStudents([]);
+            console.error('Error fetching employments:', error);
+            setToast({ message: 'خطأ في جلب بيانات , يرجى المحاولة مرة أخرى.', type: 'error', isVisible: true });
+            setEmployments([]);
         } finally {
             setIsLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchStudents();
+        fetchEmployments();
     }, [searchQuery, perPage, currentPage]);
 
     const handleDownloadExcel = async () => {
         try {
             const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-            const response = await axios.get('https://forms-api.saiid.org/api/students/export', {
+            const response = await axios.get('https://forms-api.saiid.org/api/employments/export', {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
@@ -67,7 +66,7 @@ const Students = () => {
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', 'students.xlsx');
+            link.setAttribute('download', 'employments.xlsx');
             document.body.appendChild(link);
             link.click();
             link.remove();
@@ -77,8 +76,8 @@ const Students = () => {
         }
     };
 
-    const sortedStudents = React.useMemo(() => {
-        return [...students].sort((a, b) => {
+    const sortedEmployments = React.useMemo(() => {
+        return [...employments].sort((a, b) => {
             if (!sortConfig.key) return 0;
             const aValue = sortConfig.key.split('.').reduce((o, i) => o[i], a);
             const bValue = sortConfig.key.split('.').reduce((o, i) => o[i], b);
@@ -91,7 +90,7 @@ const Students = () => {
             }
             return 0;
         });
-    }, [students, sortConfig]);
+    }, [employments, sortConfig]);
 
     const requestSort = (key) => {
         let direction = 'ascending';
@@ -116,7 +115,7 @@ const Students = () => {
         <div className="flex justify-center w-full px-4 sm:px-6 lg:px-8">
             <div className="container bg-white shadow-lg rounded-xl mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-8 mt-16 mb-20" style={{ direction: 'rtl' }}>
                 <div className="card-header flex flex-col sm:flex-row justify-between items-center mb-6 px-2 sm:px-5">
-                    <h2 className="card-title font-bold text-2xl sm:text-3xl mb-4 sm:mb-0 text-gray-800">بيانات الطلاب</h2>
+                    <h2 className="card-title font-bold text-2xl sm:text-3xl mb-4 sm:mb-0 text-gray-800">طلبات التوظيف</h2>
                     <button
                         onClick={handleDownloadExcel}
                         className="flex items-center justify-center p-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition duration-300 ease-in-out"
@@ -130,7 +129,7 @@ const Students = () => {
                         <input
                             type="text"
                             className="w-full p-2 pr-10 border border-gray-300 rounded-md text-right focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="البحث عن طالب"
+                            placeholder="البحث عن بيانات شخص"
                             value={searchQuery}
                             onChange={(e) => {
                                 setSearchQuery(e.target.value);
@@ -145,12 +144,13 @@ const Students = () => {
                     <table className="table-auto w-full border-collapse">
                         <thead>
                             <tr className="bg-gray-50 text-center">
-                                <th onClick={() => requestSort('id_number')} className="p-3 text-sm font-semibold text-gray-600 cursor-pointer hover:bg-gray-100">رقم الهوية</th>
                                 <th onClick={() => requestSort('name')} className="p-3 text-sm font-semibold text-gray-600 cursor-pointer hover:bg-gray-100">الاسم</th>
                                 <th onClick={() => requestSort('birth_date')} className="p-3 text-sm font-semibold text-gray-600 cursor-pointer hover:bg-gray-100">تاريخ الميلاد</th>
-                                <th onClick={() => requestSort('academic_stage')} className="p-3 text-sm font-semibold text-gray-600 cursor-pointer hover:bg-gray-100">المرحلة الدراسية</th>
-                                <th onClick={() => requestSort('guardian_phone_number')} className="p-3 text-sm font-semibold text-gray-600 cursor-pointer hover:bg-gray-100">رقم الجوال</th>
-                                <th onClick={() => requestSort('gender')} className="p-3 text-sm font-semibold text-gray-600 cursor-pointer hover:bg-gray-100">الجنس</th>
+                                <th onClick={() => requestSort('address')} className="p-3 text-sm font-semibold text-gray-600 cursor-pointer hover:bg-gray-100">عنوان السكن</th>
+                                <th onClick={() => requestSort('specialization')} className="p-3 text-sm font-semibold text-gray-600 cursor-pointer hover:bg-gray-100">التخصص</th>
+                                <th onClick={() => requestSort('phone_number')} className="p-3 text-sm font-semibold text-gray-600 cursor-pointer hover:bg-gray-100">رقم الجوال</th>
+                                <th onClick={() => requestSort('previous_work_url')} className="p-3 text-sm font-semibold text-gray-600 cursor-pointer hover:bg-gray-100">رابط الاعمال السابقة</th>
+
                             </tr>
                         </thead>
                         <tbody>
@@ -158,19 +158,32 @@ const Students = () => {
                                 Array(perPage).fill().map((_, index) => (
                                     <SkeletonRow key={index} />
                                 ))
-                            ) : sortedStudents.length === 0 ? (
+                            ) : sortedEmployments.length === 0 ? (
                                 <tr>
                                     <td colSpan="6" className="text-center p-4">لا توجد بيانات متاحة</td>
                                 </tr>
                             ) : (
-                                sortedStudents.map((student) => (
-                                    <tr key={student.id_number || student._id} className="text-center border-b hover:bg-gray-50">
-                                        <td className="p-3 text-sm text-gray-700">{student.id_number}</td>
-                                        <td className="p-3 text-sm text-gray-700">{student.name}</td>
-                                        <td className="p-3 text-sm text-gray-700">{formatDate(student.birth_date)}</td>
-                                        <td className="p-3 text-sm text-gray-700">{student.academic_stage}</td>
-                                        <td className="p-3 text-sm text-gray-700">{student.guardian_phone_number}</td>
-                                        <td className="p-3 text-sm text-gray-700">{student.gender}</td>
+                                sortedEmployments.map((employment) => (
+                                    <tr key={employment.id_number || employment._id} className="text-center border-b hover:bg-gray-50">
+                                        <td className="p-3 text-sm text-gray-700">{employment.name}</td>
+                                        <td className="p-3 text-sm text-gray-700">{formatDate(employment.birth_date)}</td>
+                                        <td className="p-3 text-sm text-gray-700">{employment.address}</td>
+                                        <td className="p-3 text-sm text-gray-700">{employment.specialization}</td>
+                                        <td className="p-3 text-sm text-gray-700">{employment.phone_number}</td>
+                                        <td className="p-3 text-sm text-gray-700">
+                                            {employment.previous_work_url ? (
+                                                <a
+                                                    href={employment.previous_work_url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-blue-600 hover:text-blue-800 hover:underline"
+                                                >
+                                                    رابط الاعمال
+                                                </a>
+                                            ) : (
+                                                '-'
+                                            )}
+                                        </td>
                                     </tr>
                                 ))
                             )}
@@ -214,4 +227,4 @@ const Students = () => {
     );
 };
 
-export default Students;
+export default Employments;

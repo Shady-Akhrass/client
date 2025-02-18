@@ -31,7 +31,7 @@ function Register() {
                 const data = await response.json();
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('user', JSON.stringify(data.user));
-                navigate('/dashboard');
+                navigate('/orphans-statistics');
             } else {
                 const errorData = await response.json();
                 if (errorData.errors && errorData.errors.length > 0) {
